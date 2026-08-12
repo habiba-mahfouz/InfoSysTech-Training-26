@@ -135,16 +135,14 @@ window.App = {
     cart.forEach((item, index) => {
       message += `product ${index + 1}\n`;
       message += `name: ${item.productName}\n`;
-      message += `price/item: $${item.price.toFixed(2)}\n`;
-      message += `quantity: ${item.quantity}\n`;
+      message += `price/item: ${item.price.toFixed(2)} EGP\n`;      message += `quantity: ${item.quantity}\n`;
       message += `color: ${item.color}\n`;
       message += `notes: ${item.notes}\n`;
-      message += `total price: $${item.totalPrice.toFixed(2)}\n`;
-      message += `----------------------\n`;
+      message += `total price: ${item.totalPrice.toFixed(2)} EGP\n`;      message += `----------------------\n`;
       grandTotal += item.totalPrice;
     });
 
-    message += `order total price: $${grandTotal.toFixed(2)}`;
+    message += `order total price: ${grandTotal.toFixed(2)} EGP`;
 
     const phone = window.CONFIG.WHATSAPP_NUMBER;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
