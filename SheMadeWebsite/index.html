@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHE MADE | Handcrafted Crochet & Beads</title>
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Reusable Navbar -->
+  <div id="navbar-container"></div>
+
+  <!-- Main Content -->
+  <main class="container my-4">
+
+    <!-- Section 1: Hero Section -->
+    <section class="hero-card shadow-sm">
+      <!-- Full Cover Hero Illustration -->
+      <img id="hero-img" src="images/index.jpg" alt="Hero Illustration" class="hero-illustration">
+      <!-- Soft Gradient Overlay for Text Readability -->
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+        <h1 class="hero-title" data-i18n="hero_title">Made for women by women</h1>
+        <p class="hero-text" data-i18n="hero_sub">
+          Handmade Crochet & Beads. Crafted with care, designed to stand out. Discover authentic artisanal pieces.
+        </p>
+        <a href="#best-seller-section" class="btn btn-mauve" data-i18n="shop_collection">Shop the Collection</a>
+      </div>
+    </section>
+
+    <!-- Section 2: Best Seller Section -->
+    <section id="best-seller-section" class="my-5">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="best_seller">Best Seller</h2>
+        <a href="category.html?type=bestseller" class="show-all-link" data-i18n="show_all">SHOW ALL <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="row g-4" id="best-seller-grid">
+        <!-- Dynamic Product Cards Injected Here -->
+      </div>
+    </section>
+
+    <!-- Section 3: New Arrivals Section -->
+    <section class="my-5">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="new_arrivals">New Arrivals</h2>
+        <a href="category.html?type=newarrival" class="show-all-link" data-i18n="show_all">SHOW ALL <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="row g-4" id="new-arrivals-grid">
+        <!-- Dynamic Product Cards Injected Here -->
+      </div>
+    </section>
+
+    <!-- Section 4: Video Section (How to Order?) -->
+    <section class="my-5 text-center">
+      <h2 class="font-serif fw-bold mb-2" data-i18n="how_to_order">How to Order?</h2>
+      <p class="text-muted mb-4" data-i18n="how_to_order_sub">Watch this short video to learn how to easily order via WhatsApp</p>
+      
+      <div class="video-card mx-auto max-width-700">
+        <video id="order-video" class="w-100 h-100" controls >
+          <source src="images/lion king.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Reusable Footer -->
+  <div id="footer-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Load Best Sellers
+      const bestSellers = await App.fetchProducts({ isBestSeller: true });
+      const bestGrid = document.getElementById('best-seller-grid');
+      if (bestGrid) {
+        bestGrid.innerHTML = bestSellers.slice(0, 4).map(p => createProductCardHtml(p)).join('');
+      }
+
+      // Load New Arrivals
+      const newArrivals = await App.fetchProducts({ isNewArrival: true });
+      const newGrid = document.getElementById('new-arrivals-grid');
+      if (newGrid) {
+        newGrid.innerHTML = newArrivals.slice(0, 4).map(p => createProductCardHtml(p)).join('');
+      }
+
+      // Smart Hero Image Loader Fallback
+      const heroImg = document.getElementById('hero-img');
+      if (heroImg) {
+        const fallbacks = ['images/hero-bg.png', 'images/hero-bg.jpg', 'images/hero-bg.jpeg', 'images/hero-bg.svg', 'images/hero.png', 'images/hero.jpg', 'images/hero-placeholder.jpg'];
+        let idx = 0;
+        heroImg.onerror = function() {
+          idx++;
+          if (idx < fallbacks.length) {
+            this.src = fallbacks[idx];
+          } else {
+            this.style.display = 'none';
+          }
+        };
+      }
+
+      // Video Play Button Interaction
+      const videoPlayBtn = document.getElementById('video-play-btn');
+      const orderVideo = document.getElementById('order-video');
+      if (videoPlayBtn && orderVideo) {
+        videoPlayBtn.addEventListener('click', () => {
+          orderVideo.play();
+          videoPlayBtn.style.display = 'none';
+        });
+        orderVideo.addEventListener('play', () => {
+          videoPlayBtn.style.display = 'none';
+        });
+        orderVideo.addEventListener('pause', () => {
+          videoPlayBtn.style.display = 'flex';
+        });
+      }
+    });
+  </script>
+</body>
+</html>
