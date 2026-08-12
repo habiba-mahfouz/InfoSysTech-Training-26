@@ -189,7 +189,7 @@ function createProductCardHtml(product) {
         </div>
         <div class="d-flex align-items-baseline justify-content-between mb-1">
           <h5 class="product-card-title">${product.productName}</h5>
-          <span class="product-card-price">$${product.price.toFixed(2)}</span>
+          <span class="product-card-price">${product.price.toFixed(2)} EGP</span>
         </div>
         <p class="product-card-sub">${product.description ? product.description.substring(0, 45) + '...' : product.categoryName}</p>
         <div class="mt-auto">
