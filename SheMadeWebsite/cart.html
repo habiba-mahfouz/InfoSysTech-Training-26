@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart | SHE MADE</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Reusable Navbar -->
+  <div id="navbar-container"></div>
+
+  <main class="container my-5">
+    <h1 class="text-center font-serif display-5 fw-bold mb-5" data-i18n="your_cart">Your Cart</h1>
+
+    <!-- Empty State -->
+    <div id="empty-cart-container" class="empty-card d-none">
+      <div class="empty-icon-wrap">
+        <i class="fa-solid fa-bag-shopping"></i>
+      </div>
+      <h2 class="empty-title" data-i18n="cart_empty_title">Your cart is currently empty</h2>
+      <p class="empty-text" data-i18n="cart_empty_sub">
+        It looks like you haven't added any of our handcrafted pieces to your cart yet. Discover our intentional designs and find something beautiful.
+      </p>
+      <a href="index.html" class="btn btn-mauve" data-i18n="start_shopping">START SHOPPING</a>
+    </div>
+
+    <!-- Populated State -->
+    <div id="populated-cart-container" class="row g-5 d-none">
+      
+      <!-- Section 1: Cart Items List -->
+      <div class="col-12 col-lg-8" id="cart-items-list">
+        <!-- Dynamic Cart Items injected here -->
+      </div>
+
+      <!-- Section 2: Order Summary -->
+      <div class="col-12 col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+          <h3 class="font-serif fw-bold mb-4" data-i18n="order_summary">Order Summary</h3>
+          <div class="d-flex justify-content-between mb-3 fs-5">
+            <span class="text-muted" data-i18n="estimated_total">Estimated Total</span>
+            <span id="cart-grand-total" class="fw-bold text-mauve">$0.00</span>
+          </div>
+          <hr class="my-4">
+          <button type="button" id="whatsapp-order-btn" class="btn btn-mauve w-100 py-3">
+            <i class="fa-brands fa-whatsapp me-2 fs-5"></i><span data-i18n="order_whatsapp">Order via WhatsApp</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Reusable Footer -->
+  <div id="footer-container"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCartPage();
+
+      document.getElementById('whatsapp-order-btn').addEventListener('click', () => {
+        App.sendOrderViaWhatsApp();
+      });
+    });
+
+    function renderCartPage() {
+      const cart = App.getCart();
+      const emptyContainer = document.getElementById('empty-cart-container');
+      const populatedContainer = document.getElementById('populated-cart-container');
+      const itemsList = document.getElementById('cart-items-list');
+      const grandTotalEl = document.getElementById('cart-grand-total');
+
+      if (!cart || cart.length === 0) {
+        emptyContainer.classList.remove('d-none');
+        populatedContainer.classList.add('d-none');
+        return;
+      }
+
+      emptyContainer.classList.add('d-none');
+      populatedContainer.classList.remove('d-none');
+
+      let grandTotal = 0;
+      const dict = window.I18N_DICTIONARY[window.CurrentLang] || window.I18N_DICTIONARY.en;
+
+      itemsList.innerHTML = cart.map(item => {
+        grandTotal += item.totalPrice;
+        return `
+          <div class="card border-0 shadow-sm rounded-4 p-3 mb-3 bg-white">
+            <div class="row align-items-center g-3">
+              <div class="col-3 col-md-2">
+                <img src="${item.mainImage}" alt="${item.productName}" class="img-fluid rounded-3 object-fit-cover" style="aspect-ratio: 1/1;">
+              </div>
+              <div class="col-9 col-md-6">
+                <h5 class="fw-bold mb-1">${item.productName}</h5>
+                <p class="small text-muted mb-1"><strong>Color:</strong> ${item.color}</p>
+                <p class="small text-muted mb-0"><strong>Notes:</strong> ${item.notes}</p>
+              </div>
+              <div class="col-6 col-md-2 text-md-center">
+                <span class="small text-muted">Qty: ${item.quantity}</span>
+                <div class="fw-bold text-mauve">$${item.totalPrice.toFixed(2)}</div>
+              </div>
+              <div class="col-6 col-md-2 text-end">
+                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" onclick="handleRemoveItem('${item.cartItemId}')">
+                  <i class="fa-solid fa-trash me-1"></i> ${dict.remove}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      grandTotalEl.textContent = `$${grandTotal.toFixed(2)}`;
+    }
+
+    function handleRemoveItem(cartItemId) {
+      App.removeFromCart(cartItemId);
+      renderCartPage();
+    }
+  </script>
+</body>
+</html>
